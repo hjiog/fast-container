@@ -1,35 +1,30 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
 import './App.css';
 import 'virtual:uno.css';
 
-function App() {
-  const [count, setCount] = useState(0);
+import React, { Suspense } from 'react';
+import { useRoutes } from 'react-router-dom';
 
+import routes from '~react-pages';
+
+import { Preview } from '@/components/Preview';
+
+const Layout: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+  return <div className="p-4">{children}</div>;
+};
+
+const App = () => {
   return (
-    <div className="App text-red">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount(count => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <Suspense fallback={<p>Loading...</p>}>
+      <Layout>
+        <div className="flex flex-row justify-between h-screen gap-10">
+          <div className="h-full overflow-auto border-4 flex-1">
+            <Preview />
+          </div>
+          <div className="flex-1">{useRoutes(routes)}</div>
+        </div>
+      </Layout>
+    </Suspense>
   );
-}
+};
 
 export default App;
