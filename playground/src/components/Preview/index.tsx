@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -6,8 +6,12 @@ export const Preview: React.FC = () => {
   const [sourceCode, setSourceCode] = useState<Record<string, string>>();
   useEffect(() => {
     const request = async () => {
-      const data = await (await fetch('/source.json')).json();
-      setSourceCode(data);
+      try {
+        const data = await (await fetch('/source.json')).json();
+        setSourceCode(data);
+      } catch (e) {
+        console.log(e);
+      }
     };
     request();
   });

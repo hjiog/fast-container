@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, memo } from 'react';
+import { createContext, memo, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type Store = {
@@ -16,7 +16,7 @@ type Context = {
   >;
 };
 
-const context = createContext<Context>(null as any);
+const context = createContext<Context>(null as unknown as Context);
 const { Provider } = context;
 
 const InputMemo = memo(Input);
@@ -30,14 +30,15 @@ function Card() {
   });
   const navigate = useNavigate();
   const handleNext = () => {
-    navigate('/memo');
+    navigate('/subscribe');
   };
   return (
     <Provider
       value={{
         store,
         setStore,
-      }}>
+      }}
+    >
       <>
         <div className="p-3 border-4">
           CardMemo
@@ -45,7 +46,7 @@ function Card() {
           <FormMemo name="second form" />
         </div>
         <button className="mt-4" onClick={handleNext}>
-          next: use memo
+          next: use subscribe
         </button>
       </>
     </Provider>
@@ -53,42 +54,29 @@ function Card() {
 }
 
 function Form({ name }: { name: string }) {
-  const { setStore, store } = useContext(context);
   return (
     <div className="border-2 p-3 m-4">
       {name}
       <div>
-        <InputMemo
-          className="border-2 block m-3"
-          value={store?.first}
-          onChange={input => setStore(v => ({ ...v, first: input }))}
-        />
-        <InputMemo
-          className="border-2 block m-3"
-          value={store?.second}
-          onChange={input => setStore(v => ({ ...v, second: input }))}
-        />
+        <InputMemo name="first" />
+        <InputMemo name="second" />
       </div>
     </div>
   );
 }
 
-function Input({
-  value,
-  onChange,
-  className,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  className?: string;
-}) {
+function Input({ name }: { name: 'first' | 'second' }) {
+  const { setStore, store } = useContext(context);
   return (
-    <input
-      className={className}
-      type="text"
-      value={value}
-      onChange={e => onChange(e.target.value)}
-    />
+    <div>
+      input: {name}
+      <input
+        className="border-2 block m-3"
+        type="text"
+        value={store[name]}
+        onChange={(e) => setStore((v) => ({ ...v, [name]: e.target.value }))}
+      />
+    </div>
   );
 }
 

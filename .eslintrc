@@ -1,3 +1,9 @@
 {
-  "extends": "@antfu"
+  "extends": "@antfu",
+  "rules": {
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/semi": "off",
+    "antfu/if-newline": "off",
+    "arrow-parens": "off"
+  }
 }

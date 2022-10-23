@@ -16,7 +16,7 @@ type Context = {
   >;
 };
 
-const context = createContext<Context>(null as any);
+const context = createContext<Context>(null as unknown as Context);
 const { Provider } = context;
 
 function Card() {
@@ -33,7 +33,8 @@ function Card() {
       value={{
         store,
         setStore,
-      }}>
+      }}
+    >
       <>
         <div className="p-3 border-4">
           Card
@@ -49,42 +50,29 @@ function Card() {
 }
 
 function Form({ name }: { name: string }) {
-  const { setStore, store } = useContext(context);
   return (
     <div className="border-2 p-3 m-4">
       {name}
       <div>
-        <Input
-          className="border-2 block m-3"
-          value={store?.first}
-          onChange={input => setStore(v => ({ ...v, first: input }))}
-        />
-        <Input
-          className="border-2 block m-3"
-          value={store?.second}
-          onChange={input => setStore(v => ({ ...v, second: input }))}
-        />
+        <Input name="first" />
+        <Input name="second" />
       </div>
     </div>
   );
 }
 
-function Input({
-  value,
-  onChange,
-  className,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  className?: string;
-}) {
+function Input({ name }: { name: 'first' | 'second' }) {
+  const { setStore, store } = useContext(context);
   return (
-    <input
-      className={className}
-      type="text"
-      value={value}
-      onChange={e => onChange(e.target.value)}
-    />
+    <div>
+      input: {name}
+      <input
+        className="border-2 block m-3"
+        type="text"
+        value={store[name]}
+        onChange={(e) => setStore((v) => ({ ...v, [name]: e.target.value }))}
+      />
+    </div>
   );
 }
 
