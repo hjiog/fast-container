@@ -25,7 +25,7 @@ function createProxy<State extends Record<string, unknown>>(
   return res;
 }
 
-function createContainer<State extends Record<string, unknown>>(initialValue: State) {
+function createContainer<State extends Record<string, unknown>>(useHook: () => State) {
   const context = createContext<Context<State>>(null as unknown as Context<State>);
 
   const subscribers = new Set<SubscribeFn>();
@@ -60,7 +60,9 @@ function createContainer<State extends Record<string, unknown>>(initialValue: St
 
   const Provider = (props: { children: React.ReactNode }) => {
     const { Provider } = context;
+    const initialValue = useHook();
     const value = useRef<State>(initialValue);
+    value.current = initialValue;
     const setStore: Context<State>['setStore'] = (v) => {
       value.current = {
         ...value.current,
@@ -85,10 +87,10 @@ function createContainer<State extends Record<string, unknown>>(initialValue: St
   };
 }
 
-const { Provider, useContainer } = createContainer<Store>({
+const { Provider, useContainer } = createContainer<Store>(() => ({
   first: '',
   second: '',
-});
+}));
 
 function Card() {
   return (
